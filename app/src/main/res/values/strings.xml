@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">LoginDemo</string>
+
+    //Login
+    <string name="android">android</string>
+    <string name="tutorials_hub">Tutorials hub</string>
+    <string name="already_a_member_login">Already a member? Login</string>
+
+    //Register
+    <string name="no_account_yet_create_one">No account yet? Create one</string>
+
+    //Login and Register
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="name">Name</string>
+
+</resources>

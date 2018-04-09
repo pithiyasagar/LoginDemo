@@ -48,6 +48,7 @@ public class TempDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(FIELD_USER_DETAIL, "RAVI");
 
         sqLiteDatabase.insert(TABLE_USER_NAME, null, contentValues);
+        //Test
     }
 
     public void selectUser() {

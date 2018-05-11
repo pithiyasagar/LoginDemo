@@ -58,7 +58,7 @@
         android:textColorHint="@color/white">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/ext_pass"
+            android:id="@+id/edt_pass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"

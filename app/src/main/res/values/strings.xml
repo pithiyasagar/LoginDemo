@@ -8,6 +8,15 @@
 
     //Register
     <string name="no_account_yet_create_one">No account yet? Create one</string>
+    <string name="select_gender">Select Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="select_hobby">Select Hobby</string>
+    <string name="singing">Singing</string>
+    <string name="dancing">Dancing</string>
+    <string name="swimming">Swimming</string>
+    <string name="traveling">Traveling</string>
+    <string name="address">Address</string>
 
     //Login and Register
     <string name="login">Login</string>

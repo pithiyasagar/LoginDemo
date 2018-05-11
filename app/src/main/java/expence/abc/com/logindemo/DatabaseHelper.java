@@ -20,8 +20,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Database Name
     private static final String DATABASE_NAME = "user_db";
 
+    private static final String TABLE_NAME = "user";
 
-    public DatabaseHelper(Context context) {
+    private static final String COLUMN_ID = "id";
+    public final String COLUMN_NAME = "name";
+    public final String COLUMN_EMAIL = "email";
+    public final String COLUMN_PASSWORD = "password";
+    public final String COLUMN_ADDRESS = "address";
+    public final String COLUMN_GENDER = "gender";
+    public final String COLUMN_HOBBY = "hobby";
+    private final String COLUMN_TIMESTAMP = "timestamp";
+
+
+    DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -30,33 +41,49 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         // create users table
-        db.execSQL(User.CREATE_TABLE);
+        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_NAME + " TEXT,"
+                + COLUMN_EMAIL + " TEXT,"
+                + COLUMN_PASSWORD + " TEXT,"
+                + COLUMN_ADDRESS + " TEXT,"
+                + COLUMN_GENDER + " INTEGER,"
+                + COLUMN_HOBBY + " INTEGER,"
+                + COLUMN_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP"
+                + ")";
+
+        db.execSQL(CREATE_TABLE);
     }
 
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + User.TABLE_NAME);
+        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 
         // Create tables again
-        onCreate(db);
+        //onCreate(db);
     }
 
-    public long insertUser(String user) {
+    public long insertUser(ContentValues contentValues) {
         // get writable database as we want to write data
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase writableDatabase = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         // `id` and `timestamp` will be inserted automatically.
         // no need to add them
-        values.put(User.COLUMN_NAME, user);
+        values.put(COLUMN_NAME, "");
+        values.put(COLUMN_EMAIL, "");
+        values.put(COLUMN_PASSWORD, "");
+        values.put(COLUMN_ADDRESS, "");
+        values.put(COLUMN_GENDER, 1);
+        values.put(COLUMN_HOBBY, 1);
 
         // insert row
-        long id = db.insert(User.TABLE_NAME, null, values);
+        long id = writableDatabase.insert(TABLE_NAME, null, contentValues);
 
-        // close db connection
-        db.close();
+        // close writableDatabase connection
+        writableDatabase.close();
 
         // return newly inserted row id
         return id;
@@ -66,19 +93,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // get readable database as we are not inserting anything
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(User.TABLE_NAME,
-                new String[]{User.COLUMN_ID, User.COLUMN_NAME, User.COLUMN_TIMESTAMP},
-                User.COLUMN_ID + "=?",
+        Cursor cursor = db.query(TABLE_NAME,
+                new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_TIMESTAMP},
+                COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
 
         // prepare user object
-        User user = new User(
-                cursor.getInt(cursor.getColumnIndex(User.COLUMN_ID)),
-                cursor.getString(cursor.getColumnIndex(User.COLUMN_NAME)),
-                cursor.getString(cursor.getColumnIndex(User.COLUMN_TIMESTAMP)));
+        User user = new User();
+        user.id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
+        user.name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+        user.email = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+        user.password = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+        user.address = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+        user.gender = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME));
+        user.timestamp = cursor.getString(cursor.getColumnIndex(COLUMN_TIMESTAMP));
 
         // close the db connection
         cursor.close();
@@ -90,8 +121,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<User> userArrayList = new ArrayList<>();
 
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + User.TABLE_NAME + " ORDER BY " +
-                User.COLUMN_TIMESTAMP + " DESC";
+        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " ORDER BY " +
+                COLUMN_TIMESTAMP + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
@@ -100,9 +131,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 User user = new User();
-                user.id = (cursor.getInt(cursor.getColumnIndex(User.COLUMN_ID)));
-                user.name = cursor.getString(cursor.getColumnIndex(User.COLUMN_NAME));
-                user.timestamp = cursor.getString(cursor.getColumnIndex(User.COLUMN_TIMESTAMP));
+                user.id = (cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                user.name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                user.email = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                user.password = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                user.address = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
+                user.gender = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME));
+                user.hobby = cursor.getInt(cursor.getColumnIndex(COLUMN_TIMESTAMP));
 
                 userArrayList.add(user);
             } while (cursor.moveToNext());
@@ -116,7 +151,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int getUsersCount() {
-        String countQuery = "SELECT  * FROM " + User.TABLE_NAME;
+        String countQuery = "SELECT  * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -128,21 +163,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count;
     }
 
-    public int updateUser(User user) {
+    public int updateUser(int updateId, ContentValues contentValues) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(User.COLUMN_NAME, user.name);
+        // `id` and `timestamp` will be inserted automatically.
+        // no need to add them
+        values.put(COLUMN_NAME, "");
+        values.put(COLUMN_EMAIL, "");
+        values.put(COLUMN_PASSWORD, "");
+        values.put(COLUMN_ADDRESS, "");
+        values.put(COLUMN_GENDER, 1);
+        values.put(COLUMN_HOBBY, 1);
 
         // updating row
-        return db.update(User.TABLE_NAME, values, User.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(user.id)});
+        return db.update(TABLE_NAME, values, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(updateId)});
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(int deleteId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(User.TABLE_NAME, User.COLUMN_ID + " = ?",
-                new String[]{String.valueOf(user.id)});
+        db.delete(TABLE_NAME, COLUMN_ID + " = ?",
+                new String[]{String.valueOf(deleteId)});
         db.close();
     }
 }

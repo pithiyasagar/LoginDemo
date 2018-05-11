@@ -21,7 +21,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         edt_email = findViewById(R.id.edt_email);
-        ext_pass = findViewById(R.id.ext_pass);
+        ext_pass = findViewById(R.id.edt_pass);
         btn_login = findViewById(R.id.btn_login);
         txt_no_account_yet = findViewById(R.id.txt_no_account_yet);
     }

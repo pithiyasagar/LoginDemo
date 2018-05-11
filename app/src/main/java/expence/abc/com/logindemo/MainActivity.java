@@ -29,12 +29,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.btn_base_adapter:
-                //Intent intentBaseAdapter = new Intent(MainActivity.this, ItemListBaseActivity.class);
-                //startActivity(intentBaseAdapter);
-
-                TempDatabaseHelper tempDatabaseHelper = new TempDatabaseHelper(MainActivity.this);
-                tempDatabaseHelper.insertUser();
-                tempDatabaseHelper.selectUser();
+                Intent intentBaseAdapter = new Intent(MainActivity.this, ItemListBaseActivity.class);
+                startActivity(intentBaseAdapter);
                 break;
 
             case R.id.btn_retrofit:

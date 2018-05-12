@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -34,18 +35,19 @@
     </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:textColorHint="@color/white">
+        android:textColorHint="@color/white"
+        app:errorEnabled="true">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/edt_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
             android:imeOptions="actionNext"
-            android:inputType="text"
+            android:inputType="textEmailAddress"
             android:maxLines="1"
             android:textColor="@color/white"
             android:textColorHint="@color/white" />
@@ -53,12 +55,14 @@
 
 
     <android.support.design.widget.TextInputLayout
+        android:id="@+id/til_pass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColorHint="@color/white">
+        android:textColorHint="@color/white"
+        app:errorEnabled="true"
+        app:passwordToggleEnabled="true">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/edt_pass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
@@ -87,6 +91,7 @@
         android:layout_marginTop="50dp"
         android:gravity="center"
         android:onClick="onClick"
+        android:padding="10dp"
         android:text="@string/no_account_yet_create_one"
         android:textColor="@color/white" />
 </LinearLayout>

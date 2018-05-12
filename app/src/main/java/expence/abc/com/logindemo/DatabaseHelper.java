@@ -20,7 +20,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Database Name
     private static final String DATABASE_NAME = "user_db";
 
-    private static final String TABLE_NAME = "user";
+    private static final String TABLE_USERS = "user";
 
     private static final String COLUMN_ID = "id";
     public final String COLUMN_NAME = "name";
@@ -41,14 +41,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         // create users table
-        String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
+        String CREATE_TABLE = "CREATE TABLE " + TABLE_USERS + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_NAME + " TEXT,"
                 + COLUMN_EMAIL + " TEXT,"
                 + COLUMN_PASSWORD + " TEXT,"
                 + COLUMN_ADDRESS + " TEXT,"
                 + COLUMN_GENDER + " INTEGER,"
-                + COLUMN_HOBBY + " INTEGER,"
+                + COLUMN_HOBBY + " TEXT,"
                 + COLUMN_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP"
                 + ")";
 
@@ -59,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
 
         // Create tables again
         //onCreate(db);
@@ -77,10 +77,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PASSWORD, "");
         values.put(COLUMN_ADDRESS, "");
         values.put(COLUMN_GENDER, 1);
-        values.put(COLUMN_HOBBY, 1);
+        values.put(COLUMN_HOBBY, "");
 
         // insert row
-        long id = writableDatabase.insert(TABLE_NAME, null, contentValues);
+        long id = writableDatabase.insert(TABLE_USERS, null, contentValues);
 
         // close writableDatabase connection
         writableDatabase.close();
@@ -89,11 +89,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+    public boolean login(String username, String password) {
+
+        // get readable database as we are not inserting anything
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor mCursor = db.query(TABLE_USERS, new String[]{COLUMN_NAME}, COLUMN_EMAIL + "=" + "'" + username + "'"
+                        + "AND " + COLUMN_PASSWORD + "=" + "'" + password + "'", null,
+                null, null, null, null);
+        if (mCursor != null && mCursor.moveToFirst()) {
+            return true;
+        }
+        return false;
+    }
+
     public User getUser(long id) {
         // get readable database as we are not inserting anything
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_NAME,
+        Cursor cursor = db.query(TABLE_USERS,
                 new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_TIMESTAMP},
                 COLUMN_ID + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
@@ -105,10 +119,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         User user = new User();
         user.id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
         user.name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-        user.email = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-        user.password = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-        user.address = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-        user.gender = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME));
+        user.email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL));
+        user.password = cursor.getString(cursor.getColumnIndex(COLUMN_PASSWORD));
+        user.address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS));
+        user.gender = cursor.getInt(cursor.getColumnIndex(COLUMN_GENDER));
+        user.hobby = cursor.getString(cursor.getColumnIndex(COLUMN_HOBBY));
         user.timestamp = cursor.getString(cursor.getColumnIndex(COLUMN_TIMESTAMP));
 
         // close the db connection
@@ -121,7 +136,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<User> userArrayList = new ArrayList<>();
 
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + TABLE_NAME + " ORDER BY " +
+        String selectQuery = "SELECT  * FROM " + TABLE_USERS + " ORDER BY " +
                 COLUMN_TIMESTAMP + " DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -133,11 +148,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 User user = new User();
                 user.id = (cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
                 user.name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-                user.email = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-                user.password = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-                user.address = cursor.getString(cursor.getColumnIndex(COLUMN_NAME));
-                user.gender = cursor.getInt(cursor.getColumnIndex(COLUMN_NAME));
-                user.hobby = cursor.getInt(cursor.getColumnIndex(COLUMN_TIMESTAMP));
+                user.email = cursor.getString(cursor.getColumnIndex(COLUMN_EMAIL));
+                user.password = cursor.getString(cursor.getColumnIndex(COLUMN_PASSWORD));
+                user.address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS));
+                user.gender = cursor.getInt(cursor.getColumnIndex(COLUMN_GENDER));
+                user.hobby = cursor.getString(cursor.getColumnIndex(COLUMN_HOBBY));
+                user.timestamp = cursor.getString(cursor.getColumnIndex(COLUMN_TIMESTAMP));
 
                 userArrayList.add(user);
             } while (cursor.moveToNext());
@@ -151,7 +167,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public int getUsersCount() {
-        String countQuery = "SELECT  * FROM " + TABLE_NAME;
+        String countQuery = "SELECT  * FROM " + TABLE_USERS;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
 
@@ -174,16 +190,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PASSWORD, "");
         values.put(COLUMN_ADDRESS, "");
         values.put(COLUMN_GENDER, 1);
-        values.put(COLUMN_HOBBY, 1);
+        values.put(COLUMN_HOBBY, "");
 
         // updating row
-        return db.update(TABLE_NAME, values, COLUMN_ID + " = ?",
+        return db.update(TABLE_USERS, values, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(updateId)});
     }
 
     public void deleteUser(int deleteId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_NAME, COLUMN_ID + " = ?",
+        db.delete(TABLE_USERS, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(deleteId)});
         db.close();
     }

@@ -26,4 +26,14 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="name">Name</string>
 
+    //Validation
+    <string name="field_cant_be_empty">Field can\'t be empty</string>
+    <string name="name_is_too_long">Name is too long</string>
+    <string name="email_is_note_valid">Email is not valid</string>
+    <string name="password_can_not_match">Password can not match</string>
+    <string name="password_should_be_strong">Password should be strong</string>
+    <string name="please_select_gender">Please select gender</string>
+    <string name="please_select_hobby">Please select hobby</string>
+    <string name="invalid_credential">Invalid credential</string>
+
 </resources>

@@ -229,6 +229,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.txt_already_member:
                 Intent intentLogin = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intentLogin);
+                finish();
                 break;
         }
     }
